@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accessory Gallery</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<style>
+.body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color:red;
+}
+
+.gallery-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  background-color: lightgreen;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 0 10px;
+}
+
+.product-card {
+  background-color: purple;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.product-card h2 {
+  font-size: 1.2rem;
+  margin: 10px 0 5px;
+  background-color: lightblue;
+}
+
+.price {
+  font-weight: bold;
+  background-color: white;
+  margin-bottom: 5px;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: purple;
+}
+
+/* 📱 Responsive Adjustments */
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .product-card img {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card img {
+    max-width: 100%;
+  }
+}
+</style>
+<body>
+  <h1 class="gallery-title">Accessory Gallery</h1>
+  <div class="gallery">
+    <div class="product-card">
+      <img src="" alt="vivo v29" />
+      <h2>Vivo V29</h2>
+      <p class="price">₹12,999</p>
+      <p class="description"></p>
+    </div>
+    <div class="product-card">
+      <img src="" alt="Redmi 9 power" />
+      <h2>Redmi 9 power</h2>
+      <p class="price">₹11,999</p>
+      <p class="description"></p>
+      </div>
+    <div class="product-card">
+    <img src="" alt="Samsung galaxy j2" />
+      <h3>Samsung galaxy j2</h3>
+      <p class="price">₹9,999</p>
+      <p class="description"></p>
+  </div>
+    <div class="product-card">
+  <img src=".jpg" alt="iphone 15"/>
+      <h2>iphone 15</h2>
+      <p class="price">₹1,99,999</p>
+      <p class="description"></p>
+    <!-- Add more product-card blocks as needed -->
+  </div>
+</body>
+</html>

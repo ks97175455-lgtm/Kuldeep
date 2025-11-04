@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuldeep | Personal Portfolio</title>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      background-color: #f4f6f9;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem;
+      background-color: #1e293b;
+      color: #fff;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+
+    main{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .intro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .profile-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: #2563eb;
+    }
+
+    .bio h2 {
+      color: #2563eb;
+      margin-bottom: 0.5rem;
+    }
+
+    .bio p {
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .skills h2 {
+      text-align: center;
+      color: #2563eb;
+      margin-bottom: 1rem;
+    }
+
+    .skills ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .social h2 {
+      text-align: center;
+      color: #2563eb;
+      margin-bottom: 1rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .social-links a {
+      text-decoration: none;
+      color: #2563eb;
+      font-weight: 600;
+      border: 2px solid #2563eb;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      transition: 0.3s;
+    }
+
+    .social-links a:hover {
+      background-color: #2563eb;
+      color: #fff;
+    }
+
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: #fff;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+
+    @media (min-width: 768px) {
+      main {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .intro {
+        flex-direction: row;
+        text-align: left;
+        justify-content: center;
+        grid-column: span 2;
+      }
+
+      .bio {
+        max-width: 500px;
+      }
+
+      .skills, .social {
+        grid-column: span 2;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>My Portfolio</h1>
+  </header>
+
+  <main>
+    <section class="intro">
+      <img src="IMG-20251101-WA0001.jpg" alt="Kuldeep's photo" class="profile-photo"></img>
+      <div class="bio">
+        <h2>About Me</h2>
+        <p>
+          Hi! I'm <strong>Kuldeep singh</strong>, a passionate Computer Science Engineering student who loves exploring
+          web development and modern technologies. I enjoy learning HTML, CSS, and JavaScript to build creative,
+          responsive websites. My goal is to become a full-stack developer and create tools that make people’s lives easier.
+        </p>
+      </div>
+    </section>
+    <section class="skills">
+      <h2>My Interests</h2>
+      <ul>
+        <li>Web Development (HTML, CSS, JavaScript)</li>
+        <li>Problem Solving & Competitive Coding</li>
+        <li>Learning new technologies</li>
+        <li>Building innovative projects</li>
+      </ul>
+    </section>
+
+    <section class="social">
+      <h2>Connect with Me</h2>
+      <div class="social-links">
+        <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
+        <a href="https://twitter.com/yourusername" target="_blank">Twitter</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Kuldeep | All Rights Reserved</p>
+  </footer>
+</body>
+</html>
