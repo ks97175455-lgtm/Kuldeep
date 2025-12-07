@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Travel Explorer – Offline Working Version</title>
+
+<style>
+/* -------------------------------------------
+    CSS VARIABLES + THEMING
+---------------------------------------------*/
+:root{
+    --bg: #eef2f7;
+    --card-bg: rgba(255,255,255,0.7);
+    --text: #222;
+    --accent: #007bff;
+    --radius: 18px;
+    --shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.dark-theme{
+    --bg:#121212;
+    --card-bg:rgba(30,30,30,0.5);
+    --text:#eaeaea;
+    --accent:#ffb74d;
+}
+
+/* -------------------------------------------
+    GENERAL STYLING
+---------------------------------------------*/
+body{
+    margin:0;
+    background:var(--bg);
+    font-family:"Poppins",sans-serif;
+    color:var(--text);
+    transition:0.4s;
+}
+
+header{
+    height:80px;
+    background:var(--accent);
+    color:white;
+    font-size:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    letter-spacing:0.8px;
+    font-weight:600;
+    box-shadow:var(--shadow);
+}
+
+/* Top Controls */
+.controls{
+    margin:20px auto;
+    width:calc(100% - 60px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+#search{
+    width:250px;
+    padding:10px 15px;
+    border-radius:var(--radius);
+    border:none;
+    outline:none;
+    font-size:15px;
+    box-shadow:var(--shadow);
+}
+
+#themeToggle, #loadBtn{
+    padding:10px 18px;
+    background:var(--accent);
+    color:white;
+    border:none;
+    border-radius:var(--radius);
+    cursor:pointer;
+    font-size:15px;
+}
+
+/* -------------------------------------------
+    GRID LAYOUT
+---------------------------------------------*/
+#travelContainer{
+    width:calc(100% - 60px);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:25px;
+    padding-bottom:40px;
+}
+
+/* -------------------------------------------
+    CARD DESIGN
+---------------------------------------------*/
+.card{
+    background:var(--card-bg);
+    backdrop-filter:blur(10px);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:20px;
+    transition:0.3s;
+}
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card img{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:15px;
+}
+
+.card h3{
+    margin:10px 0;
+    color:var(--accent);
+}
+</style>
+
+</head>
+<body>
+
+<header>🌍 Travel Explorer</header>
+
+<div class="controls">
+    <input type="text" id="search" placeholder="Search destination...">
+    <button id="loadBtn">Load Destinations</button>
+    <button id="themeToggle">Toggle Theme</button>
+</div>
+
+<div id="travelContainer"></div>
+
+<script>
+/* ==========================================================
+      GUARANTEED-WORKING LOCAL DESTINATIONS
+===========================================================*/
+const localDestinations = [
+    {
+        name: "Goa",
+        region: "India",
+        population: "18 lakh",
+        img: "https://www.mistay.in/travel-blog/content/images/2020/06/cover-goa-mistay-hotel-rooms.jpg"
+    },
+    {
+        name: "Manali",
+        region: "Himachal Pradesh",
+        population: "30,000",
+        img: "https://www.himachalhillstravels.in/storage/tours/manali-view.jpg"
+    },
+    {
+        name: "Jaipur",
+        region: "Rajasthan",
+        population: "30 lakh",
+        img: "https://image3.mouthshut.com/images/imagesp/l/Jaipur-925003663s.jpeg"
+    },
+    {
+        name: "Ooty",
+        region: "Tamil Nadu",
+        population: "88,000",
+        img: "https://www.indiatravel.app/wp-content/uploads/2024/02/places-to-visit-in-ooty.jpg"
+    },
+    {
+        name: "Kerala",
+        region: "South India",
+        population: "3.5 crore",
+        img: "https://irisholidays.com/keralatourism/wp-content/uploads/2018/12/trivandrum.jpg"
+    },
+    {
+        name: "Varanasi",
+        region: "Uttar Pradesh",
+        population: "12 lakh",
+        img: "https://www.andbeyond.com/wp-content/uploads/sites/5/iStock_000058485880_XXXLarge.jpg"
+    }
+];
+
+/* ==========================================================
+      DISPLAY LOCAL DESTINATIONS ONLY
+===========================================================*/
+function displayDestinations() {
+    const container = document.getElementById("travelContainer");
+    container.innerHTML = "";
+
+    localDestinations.forEach(place => {
+        container.innerHTML += `
+        <div class="card">
+            <img src="${place.img}">
+            <h3>${place.name}</h3>
+            <p>📍 Region: ${place.region}</p>
+            <p>👫 Population: ${place.population}</p>
+        </div>`;
+    });
+}
+
+/* ==========================================================
+      LOAD BUTTON
+===========================================================*/
+document.getElementById("loadBtn").onclick = () => {
+    displayDestinations();
+};
+
+/* ==========================================================
+      SEARCH FILTER
+===========================================================*/
+document.getElementById("search").addEventListener("keyup", () => {
+    const value = document.getElementById("search").value.toLowerCase();
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        const name = card.querySelector("h3").innerText.toLowerCase();
+        card.style.display = name.includes(value) ? "block" : "none";
+    });
+});
+
+/* ==========================================================
+      THEME TOGGLE
+===========================================================*/
+document.getElementById("themeToggle").onclick = () => {
+    document.body.classList.toggle("dark-theme");
+};
+</script>
+
+</body>
+</html>
