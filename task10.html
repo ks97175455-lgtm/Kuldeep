@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Task Manager</title>
+
+<style>
+/* -----------------------------------------
+   VARIABLES + THEME
+------------------------------------------ */
+:root{
+    --bg:#eef2f7;
+    --card:#fff;
+    --text:#222;
+    --accent:#007bff;
+    --radius:15px;
+}
+.dark{
+    --bg:#121212;
+    --card:#1f1f1f;
+    --text:#eee;
+    --accent:#ffb74d;
+}
+
+/* -----------------------------------------
+   GLOBAL STYLES
+------------------------------------------ */
+body{
+    margin:0;
+    background:var(--bg);
+    font-family:"Poppins",sans-serif;
+    color:var(--text);
+    transition:0.3s;
+}
+
+header{
+    background:var(--accent);
+    padding:15px;
+    text-align:center;
+    color:white;
+    font-size:25px;
+    font-weight:600;
+}
+
+/* Theme Button */
+#themeToggle{
+    position:fixed;
+    top:15px;
+    right:15px;
+    background:var(--accent);
+    color:white;
+    border:none;
+    border-radius:var(--radius);
+    padding:10px 15px;
+    cursor:pointer;
+}
+
+/* Layout */
+.container{
+    width:90%;
+    margin:25px auto;
+}
+
+/* Input Card */
+.card{
+    background:var(--card);
+    padding:20px;
+    border-radius:var(--radius);
+    box-shadow:0 6px 15px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+.card input, .card select{
+    width:100%;
+    padding:10px;
+    border-radius:var(--radius);
+    border:none;
+    margin-bottom:10px;
+    background:#f2f2f2;
+}
+.card button{
+    padding:10px 20px;
+    border:none;
+    background:var(--accent);
+    color:white;
+    border-radius:var(--radius);
+    cursor:pointer;
+}
+
+/* Task List */
+.task{
+    background:var(--card);
+    padding:15px;
+    margin:10px 0;
+    border-radius:var(--radius);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    transition:0.2s;
+}
+.task:hover{
+    transform:scale(1.02);
+}
+.task span{
+    font-size:16px;
+}
+.actions button{
+    padding:8px 12px;
+    border:none;
+    border-radius:var(--radius);
+    cursor:pointer;
+    margin-left:5px;
+}
+.edit{
+    background:orange;
+    color:white;
+}
+.delete{
+    background:red;
+    color:white;
+}
+.complete{
+    background:green;
+    color:white;
+}
+
+/* Progress Bar */
+.progress-card{
+    background:var(--card);
+    padding:20px;
+    border-radius:var(--radius);
+    margin-top:15px;
+}
+.progress-bar{
+    width:100%;
+    height:12px;
+    background:#d0d0d0;
+    border-radius:20px;
+    overflow:hidden;
+}
+.progress-fill{
+    height:100%;
+    background:var(--accent);
+    width:0%;
+    transition:0.3s;
+}
+
+/* Drag Highlight */
+.drag-over{
+    border:2px dashed var(--accent);
+}
+</style>
+</head>
+
+<body>
+
+<header>Task Manager </header>
+<button id="themeToggle">MODE</button>
+
+<div class="container">
+
+    <!-- Add Task Panel -->
+    <div class="card">
+        <h3>Add New Task</h3>
+        <input type="text" id="taskInput" placeholder="Enter task title...">
+
+        <select id="taskCategory">
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Urgent">Urgent</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-card">
+        <h3>Progress</h3>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p id="progressText"></p>
+    </div>
+
+    <h3>Your Tasks</h3>
+    <div id="taskList"></div>
+
+</div>
+
+<script>
+/* ==========================================================
+      LOCAL STORAGE
+========================================================= */
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+/* Load saved theme */
+if(localStorage.getItem("theme") === "dark"){
+    document.body.classList.add("dark");
+}
+
+/* ==========================================================
+      SAVE + DISPLAY FUNCTIONS
+========================================================= */
+function saveTasks(){
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function updateProgress(){
+    let total = tasks.length;
+    let done = tasks.filter(t => t.completed).length;
+
+    let percent = total === 0 ? 0 : (done / total) * 100;
+
+    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressText").innerText =
+        `${done} / ${total} tasks completed`;
+}
+
+function displayTasks(){
+    let list = document.getElementById("taskList");
+    list.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        let taskHTML = `
+        <div class="task" draggable="true" data-index="${index}">
+            <span style="${task.completed ? "text-decoration:line-through;opacity:0.6;" : ""}">
+                ${task.text} — <b>${task.category}</b>
+            </span>
+
+            <div class="actions">
+                <button class="complete" onclick="toggleComplete(${index})">
+                    ✔
+                </button>
+                <button class="edit" onclick="editTask(${index})">
+                    Edit
+                </button>
+                <button class="delete" onclick="deleteTask(${index})">
+                    X
+                </button>
+            </div>
+        </div>
+        `;
+
+        list.innerHTML += taskHTML;
+    });
+
+    enableDrag();
+    updateProgress();
+}
+
+/* ==========================================================
+      ADD TASK
+========================================================= */
+function addTask(){
+    let text = document.getElementById("taskInput").value.trim();
+    let category = document.getElementById("taskCategory").value;
+
+    if(text === ""){
+        alert("Please enter a task!");
+        return;
+    }
+
+    tasks.push({
+        text,
+        category,
+        completed:false
+    });
+
+    saveTasks();
+    displayTasks();
+    document.getElementById("taskInput").value = "";
+}
+
+/* ==========================================================
+      EDIT TASK
+========================================================= */
+function editTask(index){
+    let newText = prompt("Edit task:", tasks[index].text);
+    if(newText && newText.trim() !== ""){
+        tasks[index].text = newText;
+        saveTasks();
+        displayTasks();
+    }
+}
+
+/* ==========================================================
+      DELETE TASK
+========================================================= */
+function deleteTask(index){
+    tasks.splice(index,1);
+    saveTasks();
+    displayTasks();
+}
+
+/* ==========================================================
+      COMPLETE TASK
+========================================================= */
+function toggleComplete(index){
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    displayTasks();
+}
+
+/* ==========================================================
+      DRAG & DROP SORTING + SAVE ORDER
+========================================================= */
+function enableDrag(){
+    let items = document.querySelectorAll(".task");
+
+    items.forEach(item => {
+        item.addEventListener("dragstart", dragStart);
+        item.addEventListener("dragover", dragOver);
+        item.addEventListener("drop", dropItem);
+        item.addEventListener("dragend", dragEnd);
+    });
+}
+
+let draggedIndex = null;
+
+function dragStart(e){
+    draggedIndex = +this.dataset.index;
+    this.style.opacity = "0.5";
+}
+
+function dragOver(e){
+    e.preventDefault();
+    this.classList.add("drag-over");
+}
+
+function dropItem(e){
+    let targetIndex = +this.dataset.index;
+
+    // swap items
+    let temp = tasks[draggedIndex];
+    tasks[draggedIndex] = tasks[targetIndex];
+    tasks[targetIndex] = temp;
+
+    saveTasks();
+    displayTasks();
+}
+
+function dragEnd(){
+    this.style.opacity = "1";
+    this.classList.remove("drag-over");
+}
+
+/* ==========================================================
+      THEME TOGGLE
+========================================================= */
+document.getElementById("themeToggle").onclick = () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("MODE",
+        document.body.classList.contains("dark") ? "dark" : "light");
+};
+
+/* INITIAL DISPLAY */
+displayTasks();
+</script>
+
+</body>
+</html>
