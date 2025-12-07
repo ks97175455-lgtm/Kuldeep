@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather Dashboard</title>
+
+<style>
+    :root{
+        --bg: linear-gradient(135deg, #1e3c72, #2a5298);
+        --card: rgba(255,255,255,0.15);
+        --text: #fff;
+        --accent: #ffd166;
+        --radius: 18px;
+        --shadow: 0 12px 30px rgba(0,0,0,0.3);
+    }
+
+    *{ box-sizing: border-box; }
+
+    body{
+        margin:0;
+        background:var(--bg);
+        color:var(--text);
+        font-family:"Poppins", sans-serif;
+        display:flex;
+        justify-content:center;
+        min-height:100vh;
+        padding:20px;
+    }
+
+    .app{
+        width:95%;
+        max-width:850px;
+        background:rgba(255,255,255,0.12);
+        padding:20px;
+        border-radius:22px;
+        backdrop-filter:blur(18px);
+        box-shadow:var(--shadow);
+        animation: fadeIn 0.7s ease;
+    }
+
+    h2,h3{ margin:0 0 10px; }
+
+    .search-area{
+        display:flex;
+        gap:10px;
+        margin-bottom:20px;
+    }
+
+    input{
+        flex:1;
+        padding:12px;
+        border:none;
+        border-radius:var(--radius);
+        background:rgba(255,255,255,0.2);
+        color:white;
+        font-size:15px;
+    }
+
+    input::placeholder{ color:#eee; }
+
+    button{
+        padding:12px 20px;
+        border:none;
+        border-radius:var(--radius);
+        background:var(--accent);
+        cursor:pointer;
+        font-weight:600;
+        color:#222;
+        transition:0.3s;
+    }
+
+    button:hover{
+        transform:scale(1.05);
+    }
+
+    .card{
+        background:var(--card);
+        border-radius:var(--radius);
+        padding:18px;
+        margin-bottom:20px;
+        box-shadow:var(--shadow);
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .temp{
+        font-size:42px;
+        font-weight:600;
+    }
+
+    .forecast-item{
+        padding:10px;
+        border-radius:12px;
+        background:rgba(255,255,255,0.1);
+        margin-bottom:8px;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    #status{
+        margin-top:10px;
+        min-height:20px;
+        font-size:14px;
+    }
+
+    .error{ color:#ffb3b3; }
+
+    /* Animations */
+    @keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+    /* Responsive */
+    @media(max-width:600px){
+        .search-area{ flex-direction:column; }
+        button{ width:100%; }
+        .temp{ font-size:34px; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="search-area">
+        <input type="text" id="cityInput" placeholder="Search city... (e.g., Delhi, Mumbai)">
+        <button id="searchBtn">Search</button>
+    </div>
+
+    <div class="card">
+        <h2>Current Weather</h2>
+        <div id="currentWeather">Search a city to see weather.</div>
+    </div>
+
+    <div class="card">
+        <h3>7-Day Forecast</h3>
+        <div id="forecast"></div>
+    </div>
+
+    <div id="status"></div>
+
+</div>
+
+<script>
+// ------------- Helper: Display Status -------------
+function setStatus(msg, isError = false){
+    let s = document.getElementById("status");
+    s.innerHTML = msg;
+    s.className = isError ? "error" : "";
+}
+
+// ----------- Convert city name → latitude/longitude -----------
+async function getCoordinates(city){
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${city}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error("City lookup failed");
+
+    const data = await res.json();
+    if(!data.results || data.results.length === 0){
+        throw new Error("City not found");
+    }
+
+    return data.results[0]; // Best match
+}
+
+// ----------- Get Weather & Forecast (NO API KEY REQUIRED) -----------
+async function getWeather(lat, lon){
+    const url = `
+        https://api.open-meteo.com/v1/forecast?
+        latitude=${lat}&longitude=${lon}
+        &current_weather=true
+        &daily=temperature_2m_max,temperature_2m_min,weathercode
+        &timezone=auto
+    `.replace(/\s+/g,"");
+
+    const res = await fetch(url);
+    if(!res.ok) throw new Error("Weather data fetch failed");
+
+    return res.json();
+}
+
+// ----------- Render Current Weather -----------
+function renderCurrent(data, city){
+    const cw = data.current_weather;
+    document.getElementById("currentWeather").innerHTML = `
+        <h3>${city}</h3>
+        <div class="temp">${cw.temperature}°C</div>
+        <p>Wind: ${cw.windspeed} km/h</p>
+        <p>Time: ${cw.time}</p>
+    `;
+}
+
+// ----------- Render 7-day Forecast -----------
+function renderForecast(data){
+    let html = "";
+    const days = data.daily.time;
+    const max = data.daily.temperature_2m_max;
+    const min = data.daily.temperature_2m_min;
+
+    for(let i=0; i<days.length; i++){
+        html += `
+            <div class="forecast-item">
+                <b>${days[i]}</b><br>
+                Max: ${max[i]}°C — Min: ${min[i]}°C
+            </div>
+        `;
+    }
+
+    document.getElementById("forecast").innerHTML = html;
+}
+
+// ----------- Handle Search -----------
+async function searchCity(){
+    const city = document.getElementById("cityInput").value.trim();
+    if(!city){
+        setStatus("Please enter a city!", true);
+        return;
+    }
+
+    setStatus("Loading...");
+
+    try{
+        const geo = await getCoordinates(city);
+        const weather = await getWeather(geo.latitude, geo.longitude);
+
+        renderCurrent(weather, geo.name);
+        renderForecast(weather);
+        setStatus("Weather loaded ✔");
+    }
+    catch(err){
+        setStatus(err.message, true);
+    }
+}
+
+// ----------- Event Listeners -----------
+document.getElementById("searchBtn").addEventListener("click", searchCity);
+document.getElementById("cityInput").addEventListener("keydown", e=>{
+    if(e.key==="Enter") searchCity();
+});
+</script>
+
+</body>
+</html>
