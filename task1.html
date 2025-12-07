@@ -2,178 +2,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kuldeep | Personal Portfolio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio – Modern UI</title>
 
   <style>
+    :root {
+      --bg: #e9e7ff;
+      --text: #1a1a1a;
+      --accent: #5c2aff;
+      --accent-dark: #4720c9;
+      --card-bg: rgba(255, 255, 255, 0.6);
+    }
+
     body {
-      font-family: "Poppins", sans-serif;
       margin: 0;
-      padding: 0;
-      color: #333;
-      background-color: #f4f6f9;
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
     }
 
-    header {
+    /* Container */
+    .wrapper {
+      max-width: 850px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    /* Profile section */
+    .profile {
       text-align: center;
-      padding: 2rem;
-      background-color: #1e293b;
-      color: #fff;
+      margin-bottom: 40px;
     }
 
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-
-    main{
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      padding: 2rem;
-    }
-
-    .intro {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-      text-align: center;
-    }
-
-    .profile-photo {
+    .profile img {
       width: 150px;
       height: 150px;
-      border-radius: 50%;
       object-fit: cover;
-      border: #2563eb;
+      border-radius: 50%;
+      border: 4px solid var(--accent);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
-    .bio h2 {
-      color: #2563eb;
-      margin-bottom: 0.5rem;
+    .profile h1 {
+      font-size: 2rem;
+      margin: 20px 0 5px;
     }
 
-    .bio p {
-      max-width: 600px;
-      line-height: 1.6;
-    }
-
-    .skills h2 {
-      text-align: center;
-      color: #2563eb;
-      margin-bottom: 1rem;
-    }
-
-    .skills ul {
-      list-style-type: disc;
-      padding-left: 20px;
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    .social h2 {
-      text-align: center;
-      color: #2563eb;
-      margin-bottom: 1rem;
-    }
-
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .social-links a {
-      text-decoration: none;
-      color: #2563eb;
+    .subtitle {
+      color: var(--accent);
       font-weight: 600;
-      border: 2px solid #2563eb;
-      padding: 0.5rem 1rem;
-      border-radius: 25px;
+      margin-bottom: 15px;
+    }
+
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background: var(--text);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      font-size: 0.95rem;
       transition: 0.3s;
     }
 
-    .social-links a:hover {
-      background-color: #2563eb;
-      color: #fff;
+    .btn:hover {
+      background: var(--accent-dark);
     }
 
+    /* Section titles */
+    h2.section-title {
+      color: var(--accent);
+      margin-top: 40px;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+    }
 
-    footer {
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    hr {
+      margin: 30px 0;
+      border: none;
+      border-bottom: 1px solid #aaa;
+      opacity: 0.5;
+    }
+
+    /* Footer text */
+    .footer {
       text-align: center;
-      padding: 1rem;
-      background-color: #1e293b;
-      color: #fff;
+      margin-top: 40px;
       font-size: 0.9rem;
-      margin-top: 2rem;
+      opacity: 0.7;
     }
 
-
-    @media (min-width: 768px) {
-      main {
-        grid-template-columns: 1fr 1fr;
+    /* Responsive */
+    @media (max-width: 600px) {
+      .profile h1 {
+        font-size: 1.7rem;
       }
-
-      .intro {
-        flex-direction: row;
-        text-align: left;
-        justify-content: center;
-        grid-column: span 2;
-      }
-
-      .bio {
-        max-width: 500px;
-      }
-
-      .skills, .social {
-        grid-column: span 2;
+      .btn {
+        width: 100%;
+        text-align: center;
       }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>My Portfolio</h1>
-  </header>
 
-  <main>
-    <section class="intro">
-      <img src="IMG-20251101-WA0001.jpg" alt="Kuldeep's photo" class="profile-photo"></img>
-      <div class="bio">
-        <h2>About Me</h2>
-        <p>
-          Hi! I'm <strong>Kuldeep singh</strong>, a passionate Computer Science Engineering student who loves exploring
-          web development and modern technologies. I enjoy learning HTML, CSS, and JavaScript to build creative,
-          responsive websites. My goal is to become a full-stack developer and create tools that make people’s lives easier.
-        </p>
+  <div class="wrapper">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile">
+      <img src="https://mickeyblog.com/wp-content/uploads/2024/02/Mufasa-3.jpg" alt="Profile Image" />
+
+      <h1>Kuldeep Singh</h1>
+      <p class="subtitle">Front-End Developer • UI Engineer</p>
+
+      <p>
+        I craft modern, accessible interfaces and design systems.
+        Passionate about <strong>performance</strong>,
+        <strong>animations</strong>, and creating delightful user
+        experiences.
+      </p>
+
+      <div class="btn-group">
+        <button class="btn">Download CV</button>
+        <button class="btn">Contact Me</button>
+        <button class="btn">LinkedIn</button>
+        <button class="btn">GitHub</button>
+        <button class="btn">Twitter</button>
       </div>
-    </section>
-    <section class="skills">
-      <h2>My Interests</h2>
-      <ul>
-        <li>Web Development (HTML, CSS, JavaScript)</li>
-        <li>Problem Solving & Competitive Coding</li>
-        <li>Learning new technologies</li>
-        <li>Building innovative projects</li>
-      </ul>
-    </section>
+    </div>
 
-    <section class="social">
-      <h2>Connect with Me</h2>
-      <div class="social-links">
-        <a href="https://github.com/yourusername" target="_blank">GitHub</a>
-        <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
-        <a href="https://twitter.com/yourusername" target="_blank">Twitter</a>
-      </div>
-    </section>
-  </main>
+    <!-- ABOUT SECTION -->
+    <h2 class="section-title">ABOUT ME</h2>
+    <p>
+      I specialize in building <strong>component-driven UIs</strong> with
+      HTML, CSS/SCSS & modern JavaScript.  
+      I value <strong>semantics</strong>,
+      <strong>accessibility (A11y)</strong>, and maintainable architecture.
+    </p>
 
-  <footer>
-    <p>© 2025 Kuldeep | All Rights Reserved</p>
-  </footer>
+    <!-- KEY SKILLS -->
+    <h2 class="section-title">KEY SKILLS</h2>
+    <ul>
+      <li>Semantic HTML</li>
+      <li>Responsive CSS Grid/Flex</li>
+      <li>SCSS & Design Tokens</li>
+      <li>Accessibility</li>
+      <li>Animations & Transitions</li>
+      <li>Performance</li>
+    </ul>
+
+    <!-- HIGHLIGHTS -->
+    <h2 class="section-title">HIGHLIGHTS</h2>
+    <ul>
+      <li>Built design system components used across multiple products</li>
+      <li>Improved Web Vitals (LCP + CLS) for 3 web applications</li>
+      <li>Mentored teams on CSS architecture & accessibility practices</li>
+    </ul>
+
+    <hr>
+
+    <p><strong>Email:</strong> kuldeep@gmail.com</p>
+    <p><strong>Location:</strong> Jaipur, India</p>
+    <p>
+      <strong>Open to:</strong> Front-end roles, UI engineering,
+      design systems
+    </p>
+
+    <div class="footer">
+      © 2025 Kuldeep — Crafted with HTML & CSS
+    </div>
+
+  </div>
+
 </body>
 </html>
