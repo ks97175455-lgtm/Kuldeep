@@ -5,114 +5,132 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Accessory Gallery</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f3f4f6;
+    }
+
+    /* TITLE */
+    .gallery-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      color: #1e3a8a;
+      font-weight: bold;
+    }
+
+    /* GALLERY GRID */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      padding: 0 15px;
+    }
+
+    /* PRODUCT CARD */
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 18px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    /* PRODUCT IMAGE */
+    .product-card img {
+      width: 100%;
+      height: 260px;
+      object-fit: contain;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      background: #eef2ff;
+      padding: 10px;
+    }
+
+    /* PRODUCT NAME */
+    .product-card h2, .product-card h3 {
+      font-size: 1.3rem;
+      margin: 10px 0;
+      color: #111;
+    }
+
+    /* PRICE */
+    .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #16a34a;
+      margin-bottom: 10px;
+    }
+
+    /* DESC */
+    .description {
+      color: #555;
+      font-size: 0.9rem;
+      min-height: 40px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      .product-card img {
+        height: 220px;
+      }
+    }
+  </style>
+
 </head>
-<style>
-.body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color:red;
-}
 
-.gallery-title {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 2rem;
-  background-color: lightgreen;
-}
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 0 10px;
-}
-
-.product-card {
-  background-color: purple;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.product-card img {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  border-radius: 6px;
-  margin-bottom: 10px;
-}
-
-.product-card h2 {
-  font-size: 1.2rem;
-  margin: 10px 0 5px;
-  background-color: lightblue;
-}
-
-.price {
-  font-weight: bold;
-  background-color: white;
-  margin-bottom: 5px;
-}
-
-.description {
-  font-size: 0.9rem;
-  color: purple;
-}
-
-/* 📱 Responsive Adjustments */
-@media (max-width: 768px) {
-  .gallery {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .product-card img {
-    max-width: 150px;
-  }
-}
-
-@media (max-width: 480px) {
-  .gallery {
-    grid-template-columns: 1fr;
-  }
-
-  .product-card img {
-    max-width: 100%;
-  }
-}
-</style>
 <body>
-  <h1 class="gallery-title">Accessory Gallery</h1>
+
+  <h1 class="gallery-title">📱 Accessory & Mobile Gallery</h1>
+
   <div class="gallery">
+
+    <!-- Product 1 -->
     <div class="product-card">
-      <img src="" alt="vivo v29" />
+      <img src="https://api.priceinkenya.com/media/135154/conversions/Vivo-V29-5G-b-original.webp" alt="Vivo V29" />
       <h2>Vivo V29</h2>
       <p class="price">₹12,999</p>
-      <p class="description"></p>
+      <p class="description">Great camera • Snapdragon • 5000mAh</p>
     </div>
+
+    <!-- Product 2 -->
     <div class="product-card">
-      <img src="" alt="Redmi 9 power" />
-      <h2>Redmi 9 power</h2>
+      <img src="https://playfuldroid.com/wp-content/uploads/redmi-9-power.png" alt="Redmi 9 Power" />
+      <h2>Redmi 9 Power</h2>
       <p class="price">₹11,999</p>
-      <p class="description"></p>
-      </div>
+      <p class="description">48MP Camera • 6000mAh Battery</p>
+    </div>
+
+    <!-- Product 3 -->
     <div class="product-card">
-    <img src="" alt="Samsung galaxy j2" />
-      <h3>Samsung galaxy j2</h3>
+      <img src="https://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j2-1.jpg" alt="Samsung J2" />
+      <h2>Samsung Galaxy J2</h2>
       <p class="price">₹9,999</p>
-      <p class="description"></p>
-  </div>
+      <p class="description">Super AMOLED • Compact Design</p>
+    </div>
+
+    <!-- Product 4 -->
     <div class="product-card">
-  <img src=".jpg" alt="iphone 15"/>
-      <h2>iphone 15</h2>
-      <p class="price">₹1,99,999</p>
-      <p class="description"></p>
-    <!-- Add more product-card blocks as needed -->
+      <img src="https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6525/6525421_sd.jpg" alt="iPhone 15" />
+      <h2>iPhone 15</h2>
+      <p class="price">₹1,29,999</p>
+      <p class="description">A16 Bionic • Dynamic Island</p>
+    </div>
+
+   
+    
+
   </div>
+
 </body>
 </html>
+
