@@ -4,24 +4,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Conditional Greeting — Floating Emojis & Glass Mood</title>
+<title>Greeting — Mood + Time + Floating Emojis</title>
+
 <style>
   :root{
     --bg: linear-gradient(135deg,#e6f7ff,#ffffff);
-    --card-bg: rgba(255,255,255,0.65);
+    --card-bg: rgba(255,255,255,0.75);
     --text: #052035;
     --accent: #1d4ed8;
-    --glass-blur: 10px;
   }
 
   html,body{
     height:100%;
     margin:0;
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
     color:var(--text);
-    background: var(--bg);
+    background:var(--bg);
   }
 
   body{
@@ -35,395 +33,265 @@
   .wrap{
     width:min(980px,96%);
     display:grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns:1fr 380px;
     gap:20px;
     align-items:start;
   }
 
-  /* Glass card */
   .card{
-    background: var(--card-bg);
+    background:var(--card-bg);
     border-radius:14px;
-    padding:20px;
-    box-shadow: 0 10px 30px rgba(10,20,30,0.08);
-    backdrop-filter: blur(var(--glass-blur)) saturate(120%);
-    border: 1px solid rgba(255,255,255,0.5);
-  }
-
-  header h1{
-    margin:0 0 6px 0;
-    font-size:20px;
-  }
-  header p{
-    margin:0 0 16px 0;
-    color:rgba(5,32,53,0.65);
-    font-size:14px;
-  }
-
-  .controls label { font-size:13px; color:rgba(5,32,53,0.7); display:block; margin-bottom:6px; }
-  .controls input[type="text"], .controls select {
-    width:100%;
-    padding:11px 12px;
-    border-radius:8px;
-    border:1px solid rgba(5,32,53,0.06);
-    background: rgba(255,255,255,0.85);
-    margin-bottom:10px;
-    font-size:15px;
-    outline:none;
-    transition: box-shadow .18s, transform .18s;
-  }
-  .controls input[type="text"]:focus, .controls select:focus{
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(29,78,216,0.06);
-    border-color: var(--accent);
-  }
-
-  .row { display:flex; gap:10px; }
-  .btn {
-    padding:10px 14px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    background: var(--accent);
-    color:white;
-    font-weight:600;
-  }
-  .btn.secondary {
-    background: transparent;
-    color:var(--accent);
-    border: 1px solid rgba(29,78,216,0.12);
-  }
-
-  /* Preview */
-  .preview {
     padding:18px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
+    box-shadow:0 8px 30px rgba(10,20,30,0.06);
+    border:1px solid rgba(255,255,255,0.5);
   }
+
+  header h1{margin:0 0 6px 0;font-size:20px}
+  header p{margin:0 0 12px 0;color:rgba(5,32,53,0.6);font-size:13px}
+
+  .controls label{display:block;font-size:13px;margin:8px 0 6px;color:rgba(5,32,53,0.75)}
+  .controls input,.controls select{
+    width:100%;padding:10px;border-radius:8px;
+    border:1px solid rgba(5,32,53,0.06);
+    background:rgba(255,255,255,0.9);
+    font-size:15px;
+  }
+
+  .row{display:flex;gap:10px;margin-top:10px}
+  .btn{padding:10px 14px;border-radius:8px;border:0;cursor:pointer;background:var(--accent);color:white;font-weight:600}
+  .btn.secondary{background:transparent;border:1px solid rgba(29,78,216,0.12);color:var(--accent)}
+
+  .preview{padding:18px;display:flex;flex-direction:column;gap:12px}
 
   .greeting-box{
-    min-height:140px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:18px;
-    font-size:20px;
-    font-weight:700;
-    line-height:1.2;
-    transition: background .35s ease, color .35s ease, transform .28s ease;
-    color:var(--text);
-    background: linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.6));
-    position:relative;
-    overflow:visible;
+    min-height:140px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;text-align:center;
+    padding:16px;font-size:20px;font-weight:700;
+    background:linear-gradient(180deg,rgba(255,255,255,0.8),rgba(255,255,255,0.6));
   }
 
-  .greeting-text { opacity:0; transform: translateY(8px); transition: opacity .4s ease, transform .4s ease; }
+  .greeting-text{opacity:0;transform:translateY(8px);transition:.35s}
+  .greeting-text.show{opacity:1;transform:translateY(0)}
+  .meta{font-size:13px;color:rgba(5,32,53,0.6);margin-top:6px}
 
-  .greeting-text.show { opacity:1; transform: translateY(0); }
-
-  .meta { font-size:13px; color:rgba(5,32,53,0.6); }
-
-  /* Emoji layer (floating) */
-  .emoji-layer{
-    pointer-events:none;
-    position:fixed;
-    left:0; top:0; right:0; bottom:0;
-    z-index:5;
-    overflow:visible;
-  }
-  .emoji{
-    position:absolute;
-    font-size:24px;
-    will-change: transform, opacity;
-    animation: floatUp linear forwards;
-    opacity:0;
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
-  }
-  @keyframes floatUp {
-    0%{ transform: translateY(0) scale(0.9); opacity:0 }
-    12%{ opacity:1; transform: translateY(-10px) scale(1) }
-    100%{ transform: translateY(-420px) scale(1.02); opacity:0 }
+  /* Emojis */
+  .emoji-layer{pointer-events:none;position:fixed;left:0;top:0;right:0;bottom:0;z-index:40}
+  .emoji{position:absolute;font-size:22px;animation:floatUp linear forwards;opacity:0}
+  @keyframes floatUp{
+    0%{transform:translateY(0) scale(.95);opacity:0}
+    12%{opacity:1;transform:translateY(-8px) scale(1)}
+    100%{opacity:0;transform:translateY(-420px) scale(1.02)}
   }
 
-  /* Sad raindrops */
-  .raindrop {
-    position:absolute;
-    width:6px; height:16px;
-    border-radius:6px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.25));
-    transform: translateY(0);
-    animation: drop 1.1s linear forwards;
-    opacity:0;
-  }
-  @keyframes drop {
-    0%{ transform: translateY(-20px); opacity:0 }
-    10%{ opacity:1 }
-    100%{ transform: translateY(380px); opacity:0 }
+  /* Raindrops */
+  .raindrop{position:absolute;width:6px;border-radius:6px;background:rgba(255,255,255,0.9);opacity:0;animation:drop linear forwards}
+  @keyframes drop{
+    0%{opacity:0;transform:translateY(-20px)}
+    10%{opacity:1}
+    100%{opacity:0;transform:translateY(380px)}
   }
 
-  /* Zzz for tired */
-  .zzz {
-    position:absolute;
-    font-size:20px;
-    opacity:0;
-    animation: zzzUp 2s ease forwards;
-    color: rgba(0,0,0,0.55);
-  }
-  @keyframes zzzUp {
-    0%{ transform: translateY(0); opacity:0}
-    20%{ opacity:1; transform:translateY(-12px) }
-    100%{ transform: translateY(-120px); opacity:0 }
-  }
-
-  @media (max-width:880px){
-    .wrap{ grid-template-columns: 1fr; }
-    .preview { order:-1; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .emoji, .raindrop, .zzz { animation: none !important; transition: none !important; }
+  /* Zzz */
+  .zzz{position:absolute;font-size:18px;color:rgba(0,0,0,0.55);opacity:0;animation:zzzUp ease forwards}
+  @keyframes zzzUp{
+    0%{opacity:0;transform:translateY(0)}
+    20%{opacity:1;transform:translateY(-10px)}
+    100%{opacity:0;transform:translateY(-120px)}
   }
 </style>
 </head>
+
 <body>
-  <div class="emoji-layer" aria-hidden="true"></div>
 
-  <div class="wrap">
-    <section class="card" aria-labelledby="title">
-      <header id="title">
-        <h1>Greeting — Glass + Mood + Floating Emojis</h1>
-        <p>Enter name and mood. The background and accent change by mood and small floating visuals appear.</p>
-      </header>
+<div class="emoji-layer"></div>
 
-      <div class="controls" role="form" aria-label="Greeting form">
-        <label for="name">Your name</label>
-        <input id="name" type="text" placeholder="e.g., Rahul" autocomplete="name" />
+<div class="wrap">
+  <section class="card">
+    <header>
+      <h1>Greeting — Mood + Time + Emojis</h1>
+    </header>
 
-        <label for="mood">Your mood</label>
-        <select id="mood">
-          <option value="">— pick mood —</option>
-          <option value="happy">Happy</option>
-          <option value="sad">Sad</option>
-          <option value="excited">Excited</option>
-          <option value="tired">Tired</option>
-        </select>
+    <div class="controls">
+      <label>Your name</label>
+      <input id="name" type="text" placeholder="e.g., Rahul">
 
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <button class="btn" id="showBtn">Show Greeting</button>
-          <button class="btn secondary" id="surpriseBtn">Surprise Me</button>
-        </div>
+      <label>Your mood</label>
+      <select id="mood">
+        <option value="">— pick mood —</option>
+        <option value="happy">Happy</option>
+        <option value="sad">Sad</option>
+        <option value="excited">Excited</option>
+        <option value="tired">Tired</option>
+      </select>
 
-        <p style="margin-top:12px; font-size:13px; color:rgba(5,32,53,0.6);">Tip: press Enter inside the name input to show greeting.</p>
+      <div class="row">
+        <button class="btn" id="showBtn">Show Greeting</button>
+        <button class="btn secondary" id="surpriseBtn">Surprise Me</button>
+        <button class="btn secondary" id="resetBtn">Reset</button>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <aside class="card preview" aria-live="polite">
-      <div class="greeting-box" id="greetingBox">
-        <div class="greeting-text" id="greetText">Your greeting will appear here.</div>
-      </div>
+  <aside class="card preview">
+    <div class="greeting-box" id="greetingBox">
+      <div class="greeting-text" id="greetText">Your greeting will appear here.</div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div class="meta" id="metaStatus">Status: waiting</div>
-        <div><button class="btn secondary" id="resetBtn">Reset</button></div>
-      </div>
-    </aside>
-  </div>
+      <!-- ⭐ TIME DISPLAY ⭐ -->
+      <div class="meta" id="timeBox" style="font-size:15px;font-weight:600;margin-top:8px;"></div>
+
+      <div class="meta" id="metaStatus">Status: waiting</div>
+    </div>
+  </aside>
+</div>
 
 <script>
-/* ======= Mood map (backgrounds, accent, emojis, special visuals) ======= */
+/* Mood map */
 const moodMap = {
-  happy: {
-    gradient: 'linear-gradient(135deg,#FFDEE9 0%,#B5FFFC 100%)',
-    accent: '#ff6fa3',
-    emojis: ['😊','😄','🎉','🌞','🥳']
-  },
-  sad: {
-    gradient: 'linear-gradient(135deg,#cfd9df,#e2ebf0)',
-    accent: '#5b6b90',
-    emojis: ['😢','💧','☔'],
-    raindrop:true
-  },
-  excited: {
-    gradient: 'linear-gradient(135deg,#FFEDBC,#FFC6FF)',
-    accent: '#f97316',
-    emojis: ['🤩','🚀','✨','🎆']
-  },
-  tired: {
-    gradient: 'linear-gradient(135deg,#d7d2cc,#304352)',
-    accent: '#64748b',
-    emojis: ['😴','💤','🛌'],
-    zzz:true
-  },
-  default: {
-    gradient: 'linear-gradient(135deg,#e6f7ff,#ffffff)',
-    accent: '#1d4ed8',
-    emojis: []
-  }
+ happy:{gradient:'linear-gradient(135deg,#FFDEE9,#B5FFFC)',accent:'#ff6fa3',emojis:['😊','😄','🎉','🌞','🥳']},
+ sad:{gradient:'linear-gradient(135deg,#cfd9df,#e2ebf0)',accent:'#5b6b90',emojis:['😢','💧','☔'],raindrop:true},
+ excited:{gradient:'linear-gradient(135deg,#FFEDBC,#FFC6FF)',accent:'#f97316',emojis:['🤩','🚀','✨','🎆']},
+ tired:{gradient:'linear-gradient(135deg,#d7d2cc,#304352)',accent:'#64748b',emojis:['😴','💤','🛌'],zzz:true},
+ default:{gradient:'linear-gradient(135deg,#e6f7ff,#ffffff)',accent:'#1d4ed8',emojis:[]}
 };
 
 const body = document.body;
-const greetText = document.getElementById('greetText');
-const greetingBox = document.getElementById('greetingBox');
-const metaStatus = document.getElementById('metaStatus');
-const nameInput = document.getElementById('name');
-const moodSelect = document.getElementById('mood');
-const showBtn = document.getElementById('showBtn');
-const surpriseBtn = document.getElementById('surpriseBtn');
-const resetBtn = document.getElementById('resetBtn');
-const emojiLayer = document.querySelector('.emoji-layer');
+const nameInput = document.getElementById("name");
+const moodSelect = document.getElementById("mood");
+const greetText = document.getElementById("greetText");
+const timeBox = document.getElementById("timeBox");
+const metaStatus = document.getElementById("metaStatus");
+const emojiLayer = document.querySelector(".emoji-layer");
 
-let emojiTimeouts = [];
+let floatTimers = [];
+let timeInterval = null;
 
-/* Apply mood visuals: bg gradient and accent variable */
-function applyMoodVisual(mood){
-  const state = moodMap[mood] || moodMap.default;
-  body.style.background = state.gradient;
-  document.documentElement.style.setProperty('--accent', state.accent);
-  metaStatus.textContent = `Mood: ${mood || 'none'}`;
+/* Apply mood visuals */
+function applyMood(mood){
+  const s = moodMap[mood] || moodMap.default;
+  body.style.background = s.gradient;
+  document.documentElement.style.setProperty("--accent", s.accent);
 }
 
-/* Clear floating visuals */
+/* Clear emojis */
 function clearFloating(){
-  emojiTimeouts.forEach(t => clearTimeout(t));
-  emojiTimeouts = [];
-  emojiLayer.innerHTML = '';
+  floatTimers.forEach(t=>clearTimeout(t));
+  floatTimers = [];
+  emojiLayer.innerHTML = "";
 }
 
-/* Spawn floating emojis or raindrops/zzz based on mood */
+/* Spawn mood visuals */
 function spawnFloating(mood){
   clearFloating();
-  const state = moodMap[mood] || moodMap.default;
-  const w = window.innerWidth;
-  const h = window.innerHeight;
+  const s = moodMap[mood] || moodMap.default;
+  const w = innerWidth, h = innerHeight;
 
-  // Floating emojis
-  if (state.emojis && state.emojis.length){
-    for (let i=0;i<12;i++){
-      const el = document.createElement('div');
-      el.className = 'emoji';
-      el.textContent = state.emojis[Math.floor(Math.random()*state.emojis.length)];
-      const left = Math.random() * (w - 80) + 20;
-      const startTop = h * 0.9 + Math.random()*60;
-      el.style.left = left + 'px';
-      el.style.top = startTop + 'px';
-      el.style.fontSize = (16 + Math.random()*28) + 'px';
-      el.style.animationDuration = (3 + Math.random()*2.5) + 's';
-      emojiLayer.appendChild(el);
-
-      // remove after animation
-      const t = setTimeout(()=> el.remove(), 4800 + Math.random()*2200);
-      emojiTimeouts.push(t);
+  if (s.emojis){
+    for(let i=0;i<10;i++){
+      const e = document.createElement("div");
+      e.className="emoji";
+      e.textContent=s.emojis[Math.floor(Math.random()*s.emojis.length)];
+      e.style.left = (Math.random()*(w-60)+20)+"px";
+      e.style.top = (h*0.9 + Math.random()*60)+"px";
+      e.style.animationDuration = (3+Math.random()*2)+"s";
+      emojiLayer.appendChild(e);
+      floatTimers.push(setTimeout(()=>e.remove(),4000));
     }
   }
 
-  // Raindrops for sad mood
-  if (state.raindrop){
-    for (let i=0;i<14;i++){
-      const d = document.createElement('div');
-      d.className = 'raindrop';
-      const left = Math.random() * (w - 20) + 10;
-      d.style.left = left + 'px';
-      d.style.top = (-40 - Math.random()*100) + 'px';
-      d.style.height = (8 + Math.random()*28) + 'px';
-      d.style.animationDuration = (0.8 + Math.random()*1.2) + 's';
+  if(s.raindrop){
+    for(let i=0;i<12;i++){
+      const d=document.createElement("div");
+      d.className="raindrop";
+      d.style.left=(Math.random()*(w-20)+10)+"px";
+      d.style.top=(-40-Math.random()*80)+"px";
+      d.style.animationDuration=(1+Math.random()*1)+"s";
       emojiLayer.appendChild(d);
-      const t = setTimeout(()=> d.remove(), 1400 + Math.random()*2200);
-      emojiTimeouts.push(t);
+      floatTimers.push(setTimeout(()=>d.remove(),1800));
     }
   }
 
-  // Zzz for tired mood
-  if (state.zzz){
-    for (let i=0;i<6;i++){
-      const z = document.createElement('div');
-      z.className = 'zzz';
-      z.textContent = 'zzz';
-      const left = Math.random() * (w - 80) + 40;
-      z.style.left = left + 'px';
-      z.style.top = (h * 0.7 + Math.random()*140) + 'px';
-      z.style.animationDuration = (1.6 + Math.random()*1.4) + 's';
+  if(s.zzz){
+    for(let i=0;i<5;i++){
+      const z=document.createElement("div");
+      z.className="zzz";
+      z.textContent="zzz";
+      z.style.left=(Math.random()*(w-80)+30)+"px";
+      z.style.top=(h*0.7 + Math.random()*120)+"px";
+      z.style.animationDuration=(1.6+Math.random()*1.2)+"s";
       emojiLayer.appendChild(z);
-      const t = setTimeout(()=> z.remove(), 2200 + Math.random()*2200);
-      emojiTimeouts.push(t);
+      floatTimers.push(setTimeout(()=>z.remove(),2500));
     }
   }
 }
 
-/* Build greeting text and show with subtle animation */
+/* Format time */
+function getTime(){
+  const now=new Date();
+  let h=now.getHours(), m=String(now.getMinutes()).padStart(2,'0'), s=String(now.getSeconds()).padStart(2,'0');
+  let ampm="AM";
+  if(h>=12) ampm="PM";
+  if(h>12) h-=12;
+  if(h===0) h=12;
+  return `${h}:${m}:${s} ${ampm}`;
+}
+
+/* Show greeting */
 function showGreeting(){
-  const name = (nameInput.value || '').trim() || 'Friend';
-  const mood = moodSelect.value || '';
-  applyMoodVisual(mood);
+  const name=(nameInput.value.trim()||"Friend");
+  const mood=moodSelect.value||"";
+
+  applyMood(mood);
   spawnFloating(mood);
 
-  const now = new Date();
-  const hour = now.getHours();
-  let timeGreeting = '';
-  if (hour < 5) timeGreeting = 'Good Early Morning';
-  else if (hour < 12) timeGreeting = 'Good Morning';
-  else if (hour < 18) timeGreeting = 'Good Afternoon';
-  else timeGreeting = 'Good Evening';
+  const hour=new Date().getHours();
+  let text="";
+  if(hour<5) text="Good Early Morning";
+  else if(hour<12) text="Good Morning";
+  else if(hour<18) text="Good Afternoon";
+  else text="Good Evening";
 
-  let moodMessage = '';
-  if (mood === 'happy') moodMessage = "You're shining—keep smiling!";
-  else if (mood === 'sad') moodMessage = "I hope things get brighter soon.";
-  else if (mood === 'excited') moodMessage = "Let's ride that excitement!";
-  else if (mood === 'tired') moodMessage = "Take a breath and rest a bit.";
-  else moodMessage = "Have a pleasant day!";
-
-  const full = `${timeGreeting}, ${name}! ${moodMessage}`;
-  greetText.textContent = full;
-
-  // animate appearance
-  greetText.classList.remove('show');
-  // force reflow to allow repeating class toggle
+  greetText.textContent = `${text}, ${name}!`;
+  greetText.classList.remove("show");
   void greetText.offsetWidth;
-  greetText.classList.add('show');
+  greetText.classList.add("show");
 
-  metaStatus.textContent = `Shown for ${name} — mood: ${mood || 'none'}`;
-  // micro pop effect
-  greetingBox.style.transform = 'translateY(-6px) scale(1.01)';
-  setTimeout(()=> greetingBox.style.transform = '', 220);
+  timeBox.textContent = "Time: " + getTime();
+  if(timeInterval) clearInterval(timeInterval);
+  timeInterval=setInterval(()=> timeBox.textContent="Time: "+getTime(),1000);
+
+  metaStatus.textContent = `Greeting shown for ${name}`;
 }
 
-/* Surprise: random name & mood then show */
+/* Surprise */
 function surprise(){
-  const names = ['Asha','Ravi','Priya','Karan','Sana','Arjun','Maya','Sam'];
-  const moods = ['happy','sad','excited','tired'];
-  nameInput.value = names[Math.floor(Math.random()*names.length)];
-  moodSelect.value = moods[Math.floor(Math.random()*moods.length)];
+  const names=['Asha','Ravi','Priya','Karan','Sana','Arjun','Maya','Sam'];
+  const moods=['happy','sad','excited','tired'];
+  nameInput.value=names[Math.floor(Math.random()*names.length)];
+  moodSelect.value=moods[Math.floor(Math.random()*moods.length)];
   showGreeting();
 }
 
-/* Reset UI */
+/* Reset */
 function resetUI(){
   clearFloating();
-  nameInput.value = '';
-  moodSelect.value = '';
-  greetText.textContent = 'Your greeting will appear here.';
-  greetText.classList.remove('show');
-  metaStatus.textContent = 'Status: waiting';
-  applyMoodVisual('default');
+  if(timeInterval) clearInterval(timeInterval);
+  greetText.textContent="Your greeting will appear here.";
+  greetText.classList.remove("show");
+  timeBox.textContent="";
+  nameInput.value="";
+  moodSelect.value="";
+  metaStatus.textContent="Status: waiting";
+  applyMood("default");
 }
 
-/* Event listeners */
-showBtn.addEventListener('click', showGreeting);
-surpriseBtn.addEventListener('click', surprise);
-resetBtn.addEventListener('click', resetUI);
-nameInput.addEventListener('keydown', (e)=> {
-  if (e.key === 'Enter') { e.preventDefault(); showGreeting(); }
-});
+/* Events */
+document.getElementById("showBtn").onclick=showGreeting;
+document.getElementById("surpriseBtn").onclick=surprise;
+document.getElementById("resetBtn").onclick=resetUI;
 
-/* Clean up floating effects when page hidden */
-document.addEventListener('visibilitychange', ()=> {
-  if (document.hidden) clearFloating();
-});
-
-/* Init */
-applyMoodVisual('default');
+applyMood("default");
 </script>
+
 </body>
 </html>
