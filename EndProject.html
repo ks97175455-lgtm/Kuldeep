@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Find & Hire Web Application</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+/* ================= ROOT THEME ================= */
+:root{
+  --bg:#0f1724;
+  --card:rgba(15,23,36,0.85);
+  --muted:#9aa6bd;
+  --accent:#1e88f2;
+  --text:#e6eef8;
+}
+
+/* ================= ADVANCED BACKGROUND ================= */
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, #366bff, transparent 40%),
+    radial-gradient(circle at bottom right, #9f9ea2, transparent 45%),
+    linear-gradient(135deg, #1c4ff6, #b8aec3);
+  color:var(--text);
+  padding:20px;
+  transition:0.4s;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* ================= HEADER ================= */
+.logo{
+  width:50px;height:50px;
+  background:linear-gradient(135deg,var(--accent),#ed9fe5);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;
+  box-shadow:0 10px 25px rgba(213, 24, 147, 0.956);
+}
+
+/* ================= CARDS ================= */
+.card-custom{
+    background-color: rgb(154, 19, 163);
+  border-radius:16px;
+  padding:16px;
+  backdrop-filter: blur(10px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.45);
+  transition:0.35s ease;
+}
+.card-custom:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 30px 60px rgba(0,0,0,0.6);
+}
+
+/* ================= AVATAR ================= */
+.avatar{
+  width:60px;height:60px;
+  background:linear-gradient(135deg,#3b82f6,#bfbec2);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;
+  box-shadow:0 10px 20px rgba(0,0,0,0.4);
+}
+
+/* ================= TAGS ================= */
+.tag{
+  background:linear-gradient(135deg,#2563eb,#60a5fa);
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:12px;
+  margin-right:4px;
+  display:inline-block;
+}
+
+/* ================= PAGES ================= */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ================= FOOTER ================= */
+footer{
+  text-align:center;
+  color:var(--muted);
+  margin-top:40px;
+  font-size:13px;
+  opacity:0.85;
+}
+
+/* ================= LIGHT MODE ================= */
+.light{
+  --bg:#f8fafc;
+  --card:rgba(255,255,255,0.9);
+  --text:#0f172a;
+}
+.light body{
+  background:
+    radial-gradient(circle at top left, #bfdbfe, transparent 40%),
+    radial-gradient(circle at bottom right, #8d8d8d, transparent 45%),
+    linear-gradient(135deg,#f8fafc,#e2e8f0);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+<header class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex align-items-center gap-3">
+    <div class="logo">FH</div>
+    <h4 class="mb-0">Find & Hire</h4>
+  </div>
+  <nav class="d-flex gap-2">
+    <button class="btn btn-sm btn-outline-light" onclick="showPage('home')">Home</button>
+    <button class="btn btn-sm btn-outline-light" onclick="showPage('about')">About</button>
+    <button class="btn btn-sm btn-outline-warning" onclick="toggleTheme()">🌙 / ☀️</button>
+  </nav>
+</header>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+  <h5 class="mb-3">Available Professionals</h5>
+  <div class="row" id="results"></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="profile" class="page">
+  <button class="btn btn-sm btn-outline-light mb-3" onclick="showPage('home')">← Back</button>
+  <div id="profileContent"></div>
+</div>
+
+<!-- HIRE PAGE -->
+<div id="hire" class="page">
+  <button class="btn btn-sm btn-outline-light mb-3" onclick="showPage('home')">← Back</button>
+  <h4 id="hireTitle"></h4>
+  <input class="form-control mb-2" placeholder="Your Name">
+  <input class="form-control mb-2" placeholder="Your Email">
+  <textarea class="form-control mb-2" placeholder="Project Details"></textarea>
+  <button class="btn btn-success">Send Request</button>
+</div>
+
+<!-- ABOUT PAGE -->
+<div id="about" class="page">
+  <h4>About Find & Hire</h4>
+  <p>
+    Find & Hire is a web application that allows users to search,
+    view, and hire professionals such as designers, developers,
+    writers, and marketers.
+  </p>
+  <p><b>Technologies Used:</b> HTML, CSS, JavaScript, Bootstrap</p>
+</div>
+
+<footer>© 2025 Find & Hire Web Application</footer>
+
+</div>
+
+<script>
+/* SAME JAVASCRIPT — NOT TOUCHED */
+const professionals=[
+ {id:1,name:'Ayesha Sharma',title:'UI/UX Designer',location:'India',skills:['Figma','Prototyping'],rate:30,rating:4.8,about:'Product-focused designer.'},
+ {id:2,name:'Rahul Mehta',title:'Frontend Developer',location:'Remote',skills:['React','JS','CSS'],rate:45,rating:4.7,about:'Fast & accessible web apps.'},
+ {id:3,name:'Sara Lee',title:'Content Writer',location:'USA',skills:['SEO','Blogging'],rate:25,rating:4.6,about:'SEO-friendly content.'},
+ {id:4,name:'Dev Patel',title:'Full Stack Developer',location:'India',skills:['Node','React','MongoDB'],rate:55,rating:4.9,about:'Scalable full-stack solutions.'},
+ {id:5,name:'Neha Verma',title:'Digital Marketer',location:'Remote',skills:['SEO','Ads'],rate:40,rating:4.5,about:'Data-driven marketing expert.'},
+ {id:6,name:'John Carter',title:'Video Editor',location:'USA',skills:['Premiere','After Effects'],rate:35,rating:4.4,about:'Professional video editing.'}
+];
+
+function showPage(page){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(page).classList.add('active');
+}
+
+const results=document.getElementById("results");
+results.innerHTML=professionals.map(p=>`
+<div class="col-md-4 mb-3">
+ <div class="card-custom">
+  <div class="d-flex align-items-center mb-2">
+   <div class="avatar me-3">${p.name[0]}</div>
+   <div>
+    <h6>${p.name}</h6>
+    <small>${p.title}</small>
+   </div>
+  </div>
+  <p>${p.about}</p>
+  <div>${p.skills.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+  <div class="mt-3">
+   <button class="btn btn-primary btn-sm" onclick="openProfile(${p.id})">View Profile</button>
+  </div>
+ </div>
+</div>`).join("");
+
+function openProfile(id){
+ const p=professionals.find(x=>x.id===id);
+ document.getElementById("profileContent").innerHTML=`
+  <h3>${p.name}</h3>
+  <p><b>${p.title}</b></p>
+  <p>${p.about}</p>
+  <p>Location: ${p.location}</p>
+  <p>Rating: ⭐ ${p.rating}</p>
+  <p>Rate: $${p.rate}/hr</p>
+  <button class="btn btn-success" onclick="openHire(${p.id})">Hire Now</button>
+ `;
+ showPage('profile');
+}
+
+function openHire(id){
+ const p=professionals.find(x=>x.id===id);
+ document.getElementById("hireTitle").innerText=`Hire ${p.name}`;
+ showPage('hire');
+}
+
+/* THEME */
+let dark=true;
+function toggleTheme(){
+ document.body.classList.toggle('light');
+ dark=!dark;
+}
+</script>
+
+</body>
+</html>
